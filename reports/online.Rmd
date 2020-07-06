@@ -1,0 +1,215 @@
+---
+# title: "UAW-GM Cohort Study"
+# subtitle: "Suicide and fatal overdose after job loss (Cox analyses)"
+fontsize: 11pt
+date: \today
+mainfont: Arial
+# Windows only:
+# mainfontoptions: "Extension = .ttf, UprightFont = \\*, BoldFont = \\*bd, ItalicFont = \\*i, BoldItalicFont = \\*bi"
+output:
+  pdf_document:
+    latex_engine: lualatex
+    includes:
+      in_header: "~/HeadRs/StatHead.sty"
+    number_sections: false
+    toc: false
+  keep_tex: true
+  # word_document:
+  #   reference_docx: "~/HeadRs/style-guide.dotx"
+  # beamer_presentation:
+  #   toc: false
+  #   slide_level: 2
+  #   # latex_engine: lualatex
+  #   includes:
+  #     in_header: "~/HeadRs/BeamerHead.sty"
+# bibliography: ./../../references/gm.bib
+# csl: "C:/Users/kevchen/Documents/HeadRs/AMA.csl"
+geometry: margin=2.54cm
+---
+
+<!-- \fancyhead[R]{Updated employment end date} -->
+
+```{r setup, include=F}
+# setwd('gm')
+knitr::opts_chunk$set(
+	echo = F,
+	# eval = F,
+	warning = F,
+	message = F,
+	fig.align = "center",
+	fig.pos = "H",
+	results = "asis")
+
+library(here); library(knitr); library(tidyverse); library(pander)
+library(data.table); library(lubridate); library(Hmisc);
+source("~/HeadRs/00-my-theme.R")
+
+drive_D <- T
+table.engine <- "xtable"
+# table.engine <- "kable"
+ref.age <- 55
+
+```
+
+# Online-only content
+
+## eAppendix
+
+<!-- A directed acyclic graph (DAG) showing our working hypothetical causal structure is presented in eFigure 1. Under our working assumptions, reducing the risk of worker exit prior to retirement would reduce the risk of suicide and fatal overdose. Note that underlying depression was unmeasured. By conditioning on calendar time and plant, the causal parents of plant closure, we partially reduced the magnitude of confounding bias through that path.  -->
+
+Histograms of age at death among those who died of suicide and fatal overdose are presented in eFigure 1.
+
+Employment status was determined using worker exit dates from company job records. If a death occurred after worker exit, their exit date should precede their date of death. If a death occurred while employed, their exit date should equal their death date. However, we expected the worker exit dates to be imperfectly recorded, given the administrative nature of the data. We attempted to characterize the extent of possible misclassification by examining the distribution of the difference between the dates of death and worker exit.
+
+A histogram of the difference between death and worker exit dates for those who died of suicide is presented in eFigure 2a. The distribution had a strong right-skew and a striking mode in the third bin, which corresponded to suicides that occurred after, but no greater than one year after the worker exit date. Among suicides that occurred within a year of worker exit, the distribution was also strongly right-skewed, but with two local modes centered approximately around 0 and 33 days. The observed times centered around 0 were roughly bounded by a radius of 14 days (see eFigure 2b).
+
+In the main analysis, we assumed that a suicide occurred while employed if the death date preceded or equaled the recorded worker exit date. In the sensitivity analysis we assumed that a suicide occurred while employed if the death date was within a week of the worker exit date. That is, we assumed that those who died of suicide with worker exit dates that preceded their death dates by no more than one week were misclassified as not employed at death when they were in fact employed (see right-side of Table 2).
+
+To estimate the hazard ratio for a more temporally-proximate outcome, we restricted follow-up to no more than five years after worker exit. eTable 1 presents hazard ratio estimates for suicide and the combined outcome within 5 years after worker exit. 
+
+To better understand the shape of the exposure-outcome relationship, we fitted models which included a restricted penalized spline function ($df$ = 4) of age at worker exit. To fit these splines and compute hazard ratio estimates, we assumed that the hazard associated with age at worker exit was constant for those who left work at age 55 years or older, conditioning on all other covariates. To complement the analyses for categorical age at worker exit, we fitted these models for both suicide and the combined outcome (eFigure 3).
+
+\pagebreak
+
+## Online-only tables and figures
+
+\renewcommand{\tablename}{eTable}
+\renewcommand{\figurename}{eFigure}
+\setcounter{table}{0}
+\setcounter{figure}{0}
+
+\begin{figure}[H]
+\caption{Histograms of age at death due to suicide and fatal overdose in the full UAW-GM Cohort.}
+\label{fig:efig1}
+\centering
+\includegraphics{"`r here::here("reports/resources", "hist_age_suicide_despair_recent")`"}
+\end{figure}
+
+```{r efig1, fig.cap="eFigure 2. Histograms of age at death due to suicide and fatal overdose in the full UAW-GM Cohort."}
+if (table.engine != 'xtable') {
+	include_graphics(here::here("reports/resources/images", "hist_age_suicide_despair_recent.png"))
+}
+```
+
+\begin{figure}[H]
+\caption{Histograms of time between worker exit date and date of suicide in the full UAW-GM Cohort. Bins corresponding to deaths that occurred while employed are indicated in purple.}
+\label{fig:efig2}
+\centering
+\includegraphics{"`r here::here("reports/resources", "hist_time_till_suicide_two_views_recent")`"}
+\end{figure}
+
+```{r efig2, fig.cap="eFigure 3. Histograms of time between worker exit date and date of suicide in the subset of the UAW-GM Cohort with complete records. Bins corresponding to deaths that occurred while employed are indicated in purple."}
+if (table.engine != 'xtable') {
+	include_graphics(here::here("reports/resources/images", "hist_time_till_suicide_two_views_recent.png"))
+}
+```
+
+\begin{table}[H]
+\caption{Adjusted hazard ratio estimates for suicide and the combined outcome of suicide and fatal overdose within five years of worker exit by age at worker exit in the subset of the UAW-GM Cohort with complete work records.}
+\label{tab:etab1}
+\centering
+```{r etab1}
+coxph.tab <- lapply(c(
+	"suicide", "despair"), function(x) {
+		coxph.tab <- readRDS(here::here(
+			"reports/resources/estimates",
+			paste0(x, "_recent_5.tab.rds")))
+		names(coxph.tab)[2] <- "Age at worker exit"
+		names(coxph.tab)[5] <- "(95\\% CI)"
+		coxph.tab <- coxph.tab[as.vector(zoo::na.locf(coxph.tab[,1]) == "Age at job loss"),]
+		coxph.tab <- coxph.tab[,-c("Covariate", "SE")]
+		if (x == "despair") {
+			coxph.tab <- coxph.tab[,-1]
+		} else {
+			coxph.tab <- as.data.table(cbind(
+				coxph.tab[,1],
+				data.frame("\\phantom{}" = "", check.names = F),
+				coxph.tab[,-1]))
+			coxph.tab$`Age at worker exit` <- paste0(
+				"\\hspace{10pt}",
+				coxph.tab$`Age at worker exit`
+			)
+		}
+		coxph.tab
+	})
+
+coxph.tab <- cbind(coxph.tab[[1]],
+									 data.frame("\\phantom{}" = "", check.names = F),
+									 coxph.tab[[2]]
+)
+j_hr <- c(4, 8)
+coxph.tab[is.na(HR), j_hr] <- "$1.0$"
+coxph.tab[grep("55", unlist(coxph.tab[,1])), j_hr + 1] <- "\\multicolumn{1}{c}{--}"
+
+# Not math mode
+og.names <- names(coxph.tab)
+names(coxph.tab) <- paste0("V", 1:ncol(coxph.tab))
+coxph.tab[,
+		 (names(coxph.tab)) := lapply(coxph.tab, function(x) {gsub( "\\$|\\(|\\)", "", x)})]
+coxph.tab[,
+		 (names(coxph.tab)) := lapply(coxph.tab, function(x) {gsub( "\\\\,", " ", x)})]
+names(coxph.tab) <- gsub("\\(|\\)", "", og.names)
+
+if (table.engine == 'xtable') {
+	names(coxph.tab)[1] <- paste("\\vphantom{\\Large Foo}", names(coxph.tab)[1])
+	xtable(coxph.tab,
+				 align = "clrcllrcll"
+	) %>% print.xtable(
+		hline.after = c(nrow(.)),
+		add.to.row = list(
+			pos = list(-1, 0, nrow(.)),
+			command = c(paste("\\toprule\n",
+												"&&\\multicolumn{3}{p{2.75cm}}{Suicide}",
+												"&&\\multicolumn{3}{p{2.75cm}}{Suicide and fatal overdose}",
+												"\\\\",
+												"\n",
+												paste0("\\cline{",
+															 j_hr - 1,
+															 "-",
+															 j_hr + 1,
+															 "}", collapse = "")
+			),
+			"\\midrule\n",
+			paste0(
+				"\\hline",
+				"\\multicolumn{", ncol(.), "}{p{0.55\\textwidth}}{\\footnotesize{",
+				"Abbreviations: CI, confidence interval; HR, hazard ratio",
+				"}} \\\\",
+				"\\multicolumn{", ncol(.), "}{p{0.55\\textwidth}}{\\footnotesize{",
+				"Notes: Estimates were adjusted for race, plant, and calendar year of worker exit. Risk sets were indexed by time since worker exit.",
+				"}} \\\\"
+				# "\\multicolumn{", ncol(.), "}{p{0.55\\textwidth}}{\\footnotesize{",
+				# "$^\\sharp$ Restricted to men employed in or after 1970.",
+				# "}} \\\\"
+			))
+		)
+	)
+} else {
+	colnames(coxph.tab) <- gsub("\\\\phantom\\{\\}", "", colnames(coxph.tab))
+	og.names <- names(coxph.tab)
+	names(coxph.tab) <- paste0('V', 1:ncol(coxph.tab))
+	for (j in names(coxph.tab)) {
+		set(coxph.tab, i = NULL, j = j, value = gsub("\\\\multicolumn\\{.*\\}", "--", coxph.tab[[j]]))
+		set(coxph.tab, i = NULL, j = j, value = gsub("\\\\hspace\\{.*\\}", "", coxph.tab[[j]]))
+	}
+	names(coxph.tab) <- og.names
+	kable(coxph.tab,
+				justify = unlist(strsplit("lrcllrcll", "")),
+				caption = "eTable 1. Adjusted hazard ratio estimates for suicide and the combined outcome of suicide and fatal overdose within five years of worker exit by age at worker exit in the subset of the UAW-GM Cohort with complete work records.")
+}
+```
+\end{table}
+
+\begin{figure}[H]
+\caption{Continuous adjusted hazard ratio estimates for suicide and the combined outcome of suicide and fatal overdose by age at worker exit in the subset of the UAW-GM Cohort with complete work records.}
+\centering
+\label{fig:efig5}
+\includegraphics{"`r here::here("reports/resources/splines", "despair_suicide_by_age_jobloss_recent")`"}
+\end{figure}
+
+```{r efig5, fig.cap="eFigure 5. Continuous adjusted hazard ratio estimates for suicide and the combined outcome of suicide and fatal overdose in the subset of the UAW-GM Cohort with complete work records."}
+if (table.engine != 'xtable') {
+	include_graphics(here::here("reports/resources/splines/images", "despair_suicide_by_age_jobloss_recent.png"))
+}
+```
+

@@ -1,0 +1,583 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[10pt,]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+    \setmainfont[]{Arial}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdftitle={UAW-GM Cohort Study},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[margin=2.54cm]{geometry}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\PassOptionsToPackage{no-math}{fontspec}
+
+%---------------------------------------------------------------------------
+% Kevin's style file
+%---------------------------------------------------------------------------
+\usepackage{ifxetex,ifluatex}
+
+%---------------------------------------------------------------------------
+% General
+%---------------------------------------------------------------------------
+
+% When testing
+% \usepackage{lipsum}
+
+% Line numbering
+\usepackage{lineno}
+
+% Usage
+	% \linenumbers
+	% \modulolinenumbers[2]
+	% \renewcommand\thelinenumber{\color{red}\Roman{linenumber}}
+	% \begin{linenumbers}  \end{linenumbers}
+
+
+\usepackage{setspace}
+%\doublespacing
+
+\usepackage{outlines}
+\usepackage{enumitem}
+\setenumerate[4]{label=\alph*).}
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+% \renewcommand{\thesection}{\Alph{section}} % Lettered, not numbered sections
+%\usepackage{sectsty} % Allows customizing section commands
+%\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+%\numberwithin{equation}{section} % Number equations within sections
+%\numberwithin{figure}{section} % Number figures within sections
+%\numberwithin{table}{section} % Number tables within sections
+
+
+\usepackage{multicol}
+\setlength{\columnsep}{15pt}
+\newlength\Colsep
+
+\usepackage{wrapfig}
+
+%---------------------------------------------------------------------------
+% Header/footer
+%---------------------------------------------------------------------------
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead[L]{}
+\fancyhead[C]{}
+\fancyhead[R]{}
+% \fancyfoot[L]{}
+% \fancyfoot[C]{}
+% \fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+% \renewcommand{\footrulewidth}{0pt}
+% \setlength{\headheight}{15pt}
+
+%---------------------------------------------------------------------------
+% Tables, figures, images
+%---------------------------------------------------------------------------
+\usepackage{color}
+% \usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{xparse}
+\usepackage{xhfill}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0
+% Requires pdfTeX
+\usepackage{linegoal}
+\fi
+
+\usepackage{longtable}
+\setlength{\LTcapwidth}{\textwidth}
+\usepackage{xtab, booktabs}
+\usepackage{multirow}
+\usepackage[flushleft]{threeparttable} % Suzanne's
+
+\usepackage{float} % Check code chunks section for floatrow
+
+\ifluatex
+% requires lualatex
+\usepackage{pgf}
+\fi
+\usepackage{tikz}% Probability trees and flow charts and the like
+\usetikzlibrary{
+graphs,
+arrows,
+automata
+%trees,
+%shapes,
+%decoration,
+%backgrounds,
+%petri
+}
+\ifluatex
+% requires lualatex
+\usetikzlibrary{graphdrawing}
+\fi
+
+\usepackage{graphicx}
+% \usepackage{grffile}
+% \usepackage{subcaption}
+% For tables and figures in parts %%%%
+\usepackage{caption}
+% \DeclareCaptionLabelFormat{cont}{#1~#2\alph{ContinuedFloat}}
+% \captionsetup[ContinuedFloat]{labelformat=cont}
+%\graphicspath{ {file.path.here} }
+
+% Set column widths in tabular environment!
+\usepackage{array}
+\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
+\newcolumntype{C}[1]{>{\PreserveBackslash\centering}p{#1}}
+\newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}p{#1}}
+\newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
+
+% STATA output for `estout` package
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+
+
+%---------------------------------------------------------------------------
+% Code chunks and color
+%---------------------------------------------------------------------------
+% \usepackage{cprotect}
+\usepackage{listings} % for code
+\usepackage{tcolorbox}
+\NewDocumentCommand{\framecolorbox}{oommm}
+ {% #1 = width (optional)
+  % #2 = inner alignment (optional)
+  % #3 = frame color
+  % #4 = background color
+  % #5 = text
+  \IfValueTF{#1}
+   {\IfValueTF{#2}
+    {\fcolorbox{#3}{#4}{\makebox[#1][#2]{#5}}}
+    {\fcolorbox{#3}{#4}{\makebox[#1]{#5}}}%
+   }
+   {\fcolorbox{#3}{#4}{#5}}%
+ }
+
+
+%\definecolor{codegreen}{rgb}{0,0.6,0}
+%\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+%\definecolor{codepurple}{rgb}{0.58,0,0.82}
+%\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+%
+%\lstdefinestyle{mystyle}{
+%backgroundcolor=\color{backcolour},
+%commentstyle=\color{codegreen},
+%keywordstyle=\color{magenta},
+%numberstyle=\tiny\color{codegray},
+%stringstyle=\color{codepurple},
+%basicstyle=\footnotesize,
+%breakatwhitespace=false,
+%breaklines=true,
+%captionpos=b, keepspaces=true, numbers=left, numbersep=5pt, showspaces=false,
+%showstringspaces=false, showtabs=false, tabsize=2 }
+%
+%\lstset{style=mystyle}
+
+
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdfauthor={Kevin Chen},
+            pdfborder={0 0 0},
+            breaklinks=true}
+
+% Code chunk captions and references
+% \usepackage{floatrow} %interferes with float package
+% \floatsetup[figure]{capposition=top}
+% \floatsetup[table]{capposition=top}
+% \DeclareNewFloatType{chunk}{placement=H, fileext=chk, name=}
+% \captionsetup{options=chunk}
+% \renewcommand{\thechunk}{Chunk~\arabic{chunk}}
+% \makeatletter
+% \@addtoreset{chunk}{section}
+% \makeatother
+
+% Usage in R
+% library(knitr)
+% oldSource <- knit_hooks$get("source")
+% knit_hooks$set(source = function(x, options) {
+%   x <- oldSource(x, options)
+%   x <- ifelse(!is.null(options$ref), paste0("\\label{", options$ref,"}", x), x)
+%   ifelse(!is.null(options$codecap), paste0("\\captionof{chunk}{", options$codecap,"}", x), x)
+% })
+
+%---------------------------------------------------------------------------
+% Including R chunks (LaTex)
+%---------------------------------------------------------------------------
+
+\lstloadlanguages{R} % Load R syntax for listings, for a list of other languages supported see: ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/listings/listings.pdf
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{green}{rgb}{0,0.6,0}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{maroon}{rgb}{0.3,0.1,0.9}
+\lstset{
+language=R,
+basicstyle=\scriptsize\ttfamily,
+commentstyle=\ttfamily\color{gray},
+numbers=left,
+numberstyle=\ttfamily\color{gray}\footnotesize,
+stepnumber=1,
+numbersep=5pt,
+backgroundcolor=\color{white},
+showspaces=false,
+showstringspaces=false,
+showtabs=false,
+frame=single,
+tabsize=2,
+captionpos=b,
+breaklines=true,
+breakatwhitespace=false,
+% title=\lstname,
+escapeinside={},
+keywordstyle=\ttfamily\color{green},
+stringstyle=\ttfamily\color{mauve},
+identifierstyle=\color{blue},
+morekeywords={}
+}
+
+% Usage
+	% For use in LaTex or Sweave:
+	% \lstinputlisting[language=R]{Script.R}
+
+%---------------------------------------------------------------------------
+% Typographical addendum
+%---------------------------------------------------------------------------
+% \usepackage{hologo}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+% TIPA (not compatible with fontspec)
+\usepackage{tipx}
+\fi
+\usepackage{marvosym,epsdice}
+\usepackage{physics}
+\usepackage{amsmath,amsfonts,amsthm,amssymb}
+\usepackage{mathtools} \mathtoolsset{showonlyrefs}
+\usepackage{bm} % greek no good in lualatex
+\usepackage{MnSymbol} % good-looking extended math symbols
+% \usepackage{lilyglyphs} % Extended music symbols (needs XeLaTex of LuaTex)
+\usepackage{dsfont} % for cool indicator
+\usepackage{textcomp} % because unicode and hyperref may have issues
+
+\makeatletter
+\newcommand*{\indep}{%
+  \mathbin{%
+    \mathpalette{\@indep}{}%
+  }%
+}
+\newcommand*{\nindep}{%
+  \mathbin{%                   % The final symbol is a binary math operator
+    \mathpalette{\@indep}{\not}% \mathpalette helps for the adaptation
+                               % of the symbol to the different math styles.
+  }%
+}
+\newcommand*{\@indep}[2]{%
+  % #1: math style
+  % #2: empty or \not
+  \sbox0{$#1\perp\m@th$}%        box 0 contains \perp symbol
+  \sbox2{$#1=$}%                 box 2 for the height of =
+  \sbox4{$#1\vcenter{}$}%        box 4 for the height of the math axis
+  \rlap{\copy0}%                 first \perp
+  \dimen@=\dimexpr\ht2-\ht4-.2pt\relax
+      % The equals symbol is centered around the math axis.
+      % The following equations are used to calculate the
+      % right shift of the second \perp:
+      % [1] ht(equals) - ht(math_axis) = line_width + 0.5 gap
+      % [2] right_shift(second_perp) = line_width + gap
+      % The line width is approximated by the default line width of 0.4pt
+  \kern\dimen@
+  {#2}%
+      % {\not} in case of \nindep;
+      % the braces convert the relational symbol \not to an ordinary
+      % math object without additional horizontal spacing.
+  \kern\dimen@
+  \copy0 %                       second \perp
+}
+\makeatother
+
+% limits underneath
+\DeclareMathOperator*{\argminA}{arg\,min} % Jan Hlavacek
+\DeclareMathOperator*{\argminB}{argmin}   % Jan Hlavacek
+\DeclareMathOperator*{\argminC}{\arg\min}   % rbp
+\newcommand{\argminD}{\arg\!\min} % AlfC
+\newcommand{\argminE}{\mathop{\mathrm{argmin}}}          % ASdeL
+\newcommand{\argminF}{\mathop{\mathrm{argmin}}\limits}   % ASdeL
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\newcommand{\Prob}[2][]{ \mathbb{P}_{#1} \left\{ {#2} \right\}} % make a function for bb bold P with curly braces
+
+\newcommand{\E}[2][]{ \mathbb{E}_{#1}\left[ {#2} \right]} % make a function for expectation
+
+\newcommand{\Var}[2][]{ \mathrm{Var}_{#1}\left( {#2} \right)} % function for Var
+
+\newcommand{\Cov}[2][]{ \mathrm{Cov}_{#1}\left( {#2} \right)} % function for Covar
+
+\newcommand{\lik}[2][]{ \mathrm{lik}_{#1}\left( {#2} \right)} % function for lik
+
+\newcommand{\Ind}[2][]{\mathds{1}_{#1}\left[ {#2} \right]} % function for Indicator
+
+\DeclarePairedDelimiter\Abs{\lvert}{\rvert}
+
+\DeclarePairedDelimiter\dis{\lVert}{\rVert}
+
+% Swap the definition of \abs* and \norm*, so that \abs
+% and \norm resizes the size of the brackets, and the
+% starred version does not.
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+
+\let\olddis\dis
+\def\dis{\@ifstar{\olddis}{\olddis*}}
+\makeatother
+
+% For typesetting the "distributed as" symbol
+% example of use:
+% X \distras{H_0} Y
+\makeatletter
+\newcommand{\distas}[1]{\mathbin{\overset{#1}{\kern\z@\sim}}}%
+\newsavebox{\mybox}\newsavebox{\mysim}
+\newcommand{\distras}[1]{%
+  \savebox{\mybox}{\hbox{\kern3pt$\scriptstyle#1$\kern3pt}}%
+  \savebox{\mysim}{\hbox{$\sim$}}%
+  \mathbin{\overset{#1}{\kern\z@\resizebox{\wd\mybox}{\ht\mysim}{$\sim$}}}%
+}
+\makeatother
+
+%---------------------------------------------------------------------------
+% Environment commands for Markdown
+%---------------------------------------------------------------------------
+\usepackage{pdflscape}
+\newcommand{\blandscape}{\begin{landscape}}
+\newcommand{\elandscape}{\end{landscape}}
+
+\newcommand{\bcenter}{\begin{center}}
+\newcommand{\ecenter}{\end{center}}
+
+\newcommand{\bsinglespace}{\begin{singlespace}}
+\newcommand{\esinglespace}{\end{singlespace}}
+
+\newcommand\startsupplement{%
+    \makeatletter
+       \setcounter{table}{0}
+       \renewcommand{\thetable}{S\arabic{table}}
+       \setcounter{figure}{0}
+       \renewcommand{\thefigure}{S\arabic{figure}}
+    \makeatother}
+
+%---------------------------------------------------------------------------
+% Bibliography
+%---------------------------------------------------------------------------
+% \usepackage[backend=bibtex]{biblatex}
+
+%---------------------------------------------------------------------------
+% Usage
+%---------------------------------------------------------------------------
+
+% For use in LaTex or Sweave:
+% \input{/Users/kevinchen/Documents/computing/HeadRs/StatHead.tex}
+
+% An example YAML header for Rmd
+% ---
+% title: "Stat 2"
+% author: "Kevin Chen"
+% date: \today
+% output:
+%   pdf_document:
+%      # keep_tex: true
+%     #  pandoc_args: [
+%     #   "-V", "classoption=twocolumn"
+%     # ]
+%      includes:
+%         in_header: /Users/kevinchen/Documents/computing/HeadRs/StatHead.tex
+% bibliography: /Users/kevinchen/Documents/2017 Fa/245/MV_FinalProj/mv_final.bib
+% csl: /Users/kevinchen/Documents/computing/HeadRs/AMA.csl
+% geometry: margin=2cm, bottom=2.5cm
+% ---
+
+
+%---------------------------------------------------------------------------
+% Fonts
+%---------------------------------------------------------------------------
+
+%\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+%\usepackage[utf8]{inputenc}
+% Latin Modern Roman
+% \usepackage{lmodern}
+%\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+
+\ifluatex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For Arial (with lualatex)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[no-math]{fontspec}
+% \setmainfont{Arial}[
+% % Options below necessary for Windows
+% 	% Extension = .ttf,
+% 	% UprightFont = *,
+% 	% BoldFont = *bd,
+% 	% ItalicFont = *i,
+% 	% BoldItalicFont = *bi
+% 	]
+% In YAML
+% ---
+% mainfont: Arial
+% ---
+% \usepackage{lualatex-math}
+
+% Math as text, but numerals do not mpa well becuase
+% mathastext clahes with unicode-math
+% \usepackage[italic]{mathastext}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fi
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+
+\title{UAW-GM Cohort Study}
+\providecommand{\subtitle}[1]{}
+\subtitle{Suicide and fatal overdose after job loss (Cox analyses)}
+\author{}
+\date{\vspace{-2.5em}\today}
+
+\begin{document}
+\maketitle
+
+\hypertarget{tables-and-figures}{%
+\section{Tables and figures}\label{tables-and-figures}}
+
+\begin{table}[H]
+\caption{Summary of the UAW-GM Cohort restricted to men employed in or after 1970.}
+\label{tab:tab1}
+\centering
+\begin{tabular}{p{0.35\textwidth}rllrl}
+  \toprule
+  & \multicolumn{2}{l}{Full cohort} && % & \hphantom{2} & \hphantom{3} & 
+\multicolumn{2}{L{0.25\linewidth}}{Subset with complete work records $^b$} \\ % &    \\ 
+  \midrule
+$N$ (person$\cdot$years) & 26 804 & (931 435) &  & 17 553 & (565 712) \\ 
+  \textbf{Race}, $n$ (\%) &  &  &  &  &  \\ 
+  \hspace{10pt}White & 19 348 & (72 \%) &  & 11 523 & (66 \%) \\ 
+  \hspace{10pt}Black & 5 250 & (20 \%) &  & 3 844 & (22 \%) \\ 
+  \hspace{10pt}Unknown & 2 206 & (8 \%) &  & 2 186 & (12 \%) \\ 
+  \textbf{Plant}$^a$, $n$ (\%) &  &  &  &  &  \\ 
+  \hspace{10pt}Plant 1 & 6 908 & (26 \%) &  & 6 341 & (36 \%) \\ 
+  \hspace{10pt}Plant 2 & 10 293 & (38 \%) &  & 6 047 & (34 \%) \\ 
+  \hspace{10pt}Plant 3 & 9 603 & (36 \%) &  & 5 165 & (29 \%) \\ 
+  \textbf{Complete work records} & 17 553 & (65 \%) &  & 17 553 & (100 \%) \\ 
+  \textbf{Year of hire} & 1967 & (1956, 1975) &  & 1963 & (1952, 1969) \\ 
+  \textbf{Age at hire} & 24 & (20, 31) &  & 26 & (21, 34) \\ 
+  \textbf{Year of birth} & 1942 & (1927, 1950) &  & 1933 & (1922, 1946) \\ 
+  \textbf{Year of worker exit} & 1991 & (1981, 1995) &  & 1984 & (1977, 1991) \\ 
+  \textbf{Age at worker exit} & 49 & (40, 58) &  & 53 & (38, 61) \\ 
+  \textbf{Age at death among deceased} & 69 & (60, 79) &  & 71 & (61, 80) \\ 
+  \textbf{Year of death among deceased} & 1999 & (1989, 2008) &  & 1997 & (1988, 2006) \\ 
+  \textbf{Suicide cases} & 202 &  &  & 171 &  \\ 
+  \textbf{Fatal overdose cases} & 55 &  &  & 32 &  \\ 
+   \hline
+\multicolumn{6}{p{0.7\textwidth}}{\footnotesize{Notes: Statistics shown are median (first quartile, third quartile), unless otherwise indicated.}} \\
+\multicolumn{6}{p{0.7\textwidth}}{\footnotesize{$^a$ Some subjects worked at several sites; plant indicates the site of longest work record time.}} \\
+\multicolumn{6}{p{0.7\textwidth}}{\footnotesize{$^b$ Left work by December 31, 1994 when employment records were truncated.}} \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{Adjusted hazard ratio estimates for suicide by employment status in the full UAW-GM Cohort, using the recorded worker exit date and the reclassified worker exit date.}
+\label{tab:tab2}
+\centering
+\begin{tabular}{lrcllrcll}
+  \toprule
+ &&\multicolumn{3}{p{2.55cm}}{Recorded worker exit date} &&\multicolumn{3}{p{2.55cm}}{Reclassified worker exit date$^\sharp$} \\ 
+ \cline{3-5}\cline{7-9}Job exit status & \phantom{} & $n$ & HR & 95\% CI & \phantom{} & $n$ & HR & 95\% CI \\ 
+  \midrule
+At work &  & 21 & 1.0 & \multicolumn{1}{c}{--} &  & 27 & 1.0 & \multicolumn{1}{c}{--} \\ 
+  Not at work &  & 150 & 16.1 & 9.8, 26.5 &  & 144 & 11.3 & 7.1, 17.8 \\ 
+   \hline\multicolumn{9}{p{0.55\textwidth}}{\footnotesize{Abbreviations: CI, confidence interval; HR, hazard ratio}} \\\multicolumn{9}{p{0.55\textwidth}}{\footnotesize{Notes: Estimates were adjusted for race, plant, year of hire, and time-varying calendar year. Risk sets were indexed by age.}} \\\multicolumn{9}{p{0.55\textwidth}}{\footnotesize{$^\sharp$ Cases that occurred within a week after the recorded worker exit date were assumed to have occurred while still employed.}} \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\caption{Adjusted hazard ratio estimates for suicide and the combined outcome of suicide and fatal overdose by age at worker exit in the subset of the UAW-GM Cohort with complete work records.}
+\label{tab:tab3}
+\centering
+\begin{tabular}{lrcllrcll}
+  \toprule
+ &&\multicolumn{3}{p{2.55cm}}{Suicide} &&\multicolumn{3}{p{2.55cm}}{Suicide and fatal overdose} \\ 
+ \cline{3-5}\cline{7-9}\vphantom{\Large Foo} Age at worker exit & \phantom{} & $n$ & HR & 95\% CI & \phantom{} & $n$ & HR & 95\% CI \\ 
+  \midrule
+\hspace{10pt}55 or older &  & 39 & 1.0 & \multicolumn{1}{c}{--} &  & 42 & 1.0 & \multicolumn{1}{c}{--} \\ 
+  \hspace{10pt}40 to 54 &  & 44 & 1.5 & 1.0, 2.3 &  & 47 & 1.5 & 1.0, 2.3 \\ 
+  \hspace{10pt}30 to 39 &  & 39 & 1.9 & 1.2, 3.0 &  & 51 & 2.4 & 1.6, 3.6 \\ 
+  \hspace{10pt}19 to 29 &  & 28 & 1.6 & 0.9, 2.6 &  & 40 & 2.2 & 1.3, 3.4 \\ 
+   \hline\multicolumn{9}{p{0.55\textwidth}}{\footnotesize{Abbreviations: CI, confidence interval; HR, hazard ratio}} \\\multicolumn{9}{p{0.55\textwidth}}{\footnotesize{Notes: Estimates were adjusted for race, plant, and calendar year of worker exit. Risk sets were indexed by time since worker exit.}} \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\caption{Directed acyclic graph representing the working causal assumptions.}
+\label{fig:fig1}
+\centering
+\includegraphics{"/Users/kevinchen/eisen/gm-despair-leaving-work/reports/resources/dag"}
+\end{figure}
+
+\begin{figure}[H]
+\caption{Crude rate (per 100,000 person-years) of suicide and the combined outcome of suicide and fatal overdose by calendar year in the full UAW-GM Cohort.}
+\label{fig:fig2}
+\centering
+\includegraphics{"/Users/kevinchen/eisen/gm-despair-leaving-work/reports/resources/crude_rate_suicide_despair_by_calyear_landscape_recent_all-records"}
+\end{figure}
+
+\end{document}

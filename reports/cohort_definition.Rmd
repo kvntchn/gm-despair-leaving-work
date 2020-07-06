@@ -1,0 +1,63 @@
+---
+title: "UAW-GM Cohort Study"
+subtitle: "Cohort composition depends on employment end date definition"
+fontsize: 10pt
+date: \today
+mainfont: Arial
+# Windows only:
+# mainfontoptions: "Extension = .ttf, UprightFont = \\*, BoldFont = \\*bd, ItalicFont = \\*i, BoldItalicFont = \\*bi"
+output:
+  pdf_document:
+    latex_engine: lualatex
+    includes:
+      in_header: "~/HeadRs/StatHead.sty"
+    number_sections: false
+    toc: false
+    keep_tex: true
+  # word_document:
+  #   reference_docx: "~/HeadRs/style-guide.dotx"
+  # beamer_presentation:
+  #   toc: false
+  #   slide_level: 2
+  #   # latex_engine: lualatex
+  #   includes:
+  #     in_header: "~/HeadRs/BeamerHead.sty"
+# bibliography: ./../../references/gm.bib
+# csl: "C:/Users/kevchen/Documents/HeadRs/AMA.csl"
+geometry: margin=2.54cm
+---
+
+```{r setup, include=F}
+# setwd('gm')
+knitr::opts_chunk$set(
+	echo = F,
+	# eval = F,
+	warning = F,
+	message = F,
+	fig.align = "center",
+	fig.pos = "H",
+	results = "asis")
+
+library(here); library(knitr); library(tidyverse); library(pander); library(xtable)
+library(data.table); library(date); library(Hmisc);
+source(here::here("wrangling", "00-my-theme.R"))
+
+drive_D <- T
+table.engine <- "xtable"
+# table.engine <- "kable"
+ref.age <- 55
+
+```
+
+# Four ways of defining employment end
+
+1. For the manuscript submission
+	- Last dateout
+	- Folks were considered censored, if indicated as such by YOUT16
+		- Unless their last record had datein == dateout _and_ was non-numeric ($n \approx 2200$)
+2. Suzanne's employment end
+	- Last dateout, but capped at 10 years if the record was longer than 10 years ($n = 3$)
+3. Suzanne's employment end updated with what we learned last week
+	- Used the last date out, but capped at 10 years if the record was longer than 10 years
+		- Unless both final dn
+	- Folks were considered censored, if indicated as such by YOUT16

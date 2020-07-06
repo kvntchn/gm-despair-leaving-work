@@ -1,0 +1,137 @@
+% !TEX program = lualatex
+
+\documentclass[12pt,
+  border={5pt 5pt 5pt 5pt}]{standalone}
+\input{/Users/kevinchen/HeadRs/StatHead.sty}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For Arial (with lualatex)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[no-math]{fontspec}
+\setmainfont{Arial}
+\usepackage[italic]{mathastext}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usetikzlibrary{graphdrawing}
+\begin{document}
+\fbox{
+\begin{tikzpicture}[>= stealth, % arrow head style
+            shorten >= 1pt, % don't touch arrow head to node
+            auto,
+            node distance = 4cm, % distance between nodes
+            semithick, % line style
+            scale=0.85,
+            every node/.style={scale=0.85}
+        ]
+        \tikzstyle{every state}=[
+        shape=rectangle,
+        align=center,
+        draw = none,
+        thick,
+        fill = white,
+        %minimum size = 6mm
+        ]
+
+        % Nodes %%%%%
+
+        \node[state] (E)  {Job loss $_t$};
+        \node[state] (P)  [above left of=E] {Plant downsizing $_t$};
+        \node[state] (IV) [left of=P] {Plant,\\Calendar year $_t$};
+        \node[state] (Y)  [right of=E, node distance=5cm] {Suicide and\\fatal overdose $_{T > t}$};
+        \node[state] (H1) [below left of=E] {Injury,\\Drug abuse,\\Depression $_t$};
+        \node[state] (H2) [below right of=E] {Injury,\\Drug abuse,\\Depression $_{T > t}$};
+        \node[state] (X)  [below of=P, node distance=2.5cm] {Sex, Race,\\Hire cohort};
+        % \node[state] (X0)  [below left of=H1, node distance=4cm] {Calendar year$_{0}$,\\age$_{0}$};
+        % \node[state] (X1)  [right of=X0] {Calendar year$_{t}$,\\age$_{t}$};
+        % \node[state] (C)   [right of=X1, draw=black] {Censoring $_{T > t}$};
+
+        % Paths %%%%%
+
+				\path[->] (P) edge (Y);
+        \path[->] (P) edge (E);
+        \path[->] (P) [bend right=45] edge (H1);
+        \path[->] (E) edge (Y);
+        \path[->] (H1) edge (E);
+        \path[->] (H1) edge (H2);
+        \path[->] (E) edge (H2);
+        % \path[->] (H1) edge (Y);
+        \path[->] (H2) edge (Y);
+        \path[->] (X) edge (E);
+        \path[->] (X) [bend right=40] edge (Y);
+        \path[->] (IV) edge (P);
+        % \path[->] (X0) edge (X1);
+        % \path[->] (X1) edge (C);
+        % \path[->] (X1) edge (E);
+        % \path[->] (X1) edge (Y);
+        % \path[->] (X0) [bend left=30] edge (E);
+        % \path[->] (E) edge (C);
+        % \path[->] (X0) edge (Y);
+\end{tikzpicture}
+}
+
+\end{document}
+% !TEX program = lualatex
+
+\documentclass[12pt,
+  border={5pt 5pt 5pt 5pt}]{standalone}
+\input{C:/Users/kevchen/Documents/HeadRs/StatHead.sty}
+\usepackage{pgf}% requires lualatex
+
+\usetikzlibrary{graphdrawing}
+\begin{document}
+\fbox{
+	\begin{tikzpicture}[>= stealth, % arrow head style
+			shorten >= 1pt, % don't touch arrow head to node
+			auto,
+			node distance = 4cm, % distance between nodes
+			semithick, % line style
+			scale=0.85,
+			every node/.style={scale=0.85}
+		]
+		\tikzstyle{every state}=[
+		shape=rectangle,
+		align=center,
+		draw = none,
+		thick,
+		fill = white,
+		%minimum size = 6mm
+		]
+
+		% Nodes %%%%%
+
+		\node[state] (E)  {Job loss $_t$};
+		\node[state] (P)  [above of=E%, node distance=3.46cm
+		] {Plant downsizing $_t$};
+		\node[state] (IV) [left of=P] {Plant\\Calendar year $_t$};
+		\node[state] (Y)  [right of=E, node distance=5cm] {Suicide and\\fatal overdose $_{T > t}$};
+		\node[state] (H1) [below left of=E] {Depression $_t$};
+		\node[state] (H2) [below right of=E] {Depression $_{T > t}$};
+		\node[state] (X)  [below of=IV, node distance=2.5cm] {Sex, Race,\\Hire cohort};
+		% \node[state] (X0)  [below left of=H1, node distance=4cm] {Calendar year$_{0}$,\\age$_{0}$};
+		% \node[state] (X1)  [right of=X0] {Calendar year$_{t}$,\\age$_{t}$};
+		% \node[state] (C)   [right of=X1, draw=black] {Censoring $_{T > t}$};
+
+		% Paths %%%%%
+
+		\path[->] (P) edge (Y);
+		\path[->] (P) edge (E);
+		\path[->] (P) [bend right=20] edge (H1);
+		\path[->] (E) edge (Y);
+		\path[->] (H1) edge (E);
+		\path[->] (H1) edge (H2);
+		\path[->] (E) edge (H2);
+		\path[->] (H2) edge (Y);
+		\path[->] (X) edge (E);
+		\path[->] (X) [bend left=15] edge (Y);
+		\path[->] (IV) edge (P);
+		% \path[->] (X0) edge (X1);
+		% \path[->] (X1) edge (C);
+		% \path[->] (X1) edge (E);
+		% \path[->] (X1) edge (Y);
+		% \path[->] (X0) [bend left=30] edge (E);
+		% \path[->] (E) edge (C);
+		% \path[->] (X0) edge (Y);
+	\end{tikzpicture}
+}
+
+\end{document}

@@ -1,0 +1,388 @@
+---
+title: "UAW-GM Cohort Study"
+subtitle: "Suicide and fatal overdose after job loss (Cox analyses)"
+fontsize: 10pt
+date: \today
+mainfont: Arial
+# Windows only:
+# mainfontoptions: "Extension = .ttf, UprightFont = \\*, BoldFont = \\*bd, ItalicFont = \\*i, BoldItalicFont = \\*bi"
+output:
+  pdf_document:
+    latex_engine: lualatex
+    includes:
+      in_header: "~/HeadRs/StatHead.sty"
+    number_sections: false
+    toc: false
+    keep_tex: true
+  # word_document:
+  #   reference_docx: "~/HeadRs/style-guide-arial-11.dotx"
+  # beamer_presentation:
+  #   toc: false
+  #   slide_level: 2
+  #   # latex_engine: lualatex
+  #   includes:
+  #     in_header: "~/HeadRs/BeamerHead.sty"
+# bibliography: ./../../references/gm.bib
+# csl: "C:/Users/kevchen/Documents/HeadRs/AMA.csl"
+geometry: margin=2.54cm
+---
+
+<!-- \fancyhead[R]{Updated employment end date} -->
+
+```{r setup, include=F}
+# setwd('gm')
+knitr::opts_chunk$set(
+	echo = F,
+	# eval = F,
+	warning = F,
+	message = F,
+	fig.align = "center",
+	fig.pos = "H",
+	results = "asis")
+
+library(here); library(knitr); library(tidyverse); library(pander); library(xtable)
+library(data.table); library(lubridate); library(Hmisc);
+source("~/HeadRs/00-my-theme.R")
+
+drive_D <- T
+table.engine <- "xtable"
+# table.engine <- "pander"
+ref.age <- 55
+
+```
+
+# Tables and figures
+
+\begin{table}[H]
+\caption{Summary of the UAW-GM Cohort restricted to men employed in or after 1970.}
+\label{tab:tab1}
+\centering
+```{r tab1}
+source(here::here("../gm-wrangling/wrangling", "table1.R"))
+invisible(
+	lapply(c("all", "known"), function(x) {
+		assign(paste0(x, "_recent.tab1"),
+					 readRDS(here::here(paste0("reports/resources"), 
+					 									 paste0(x, "_recent.tab1.rds"))),
+					 envir = .GlobalEnv)
+	})
+)
+
+tab1 <- cbind(
+	all_recent.tab1,
+	NA,
+	known_recent.tab1)
+
+tab1 <- tab1[-(which(grepl("Sex", rownames(tab1))):(which(grepl("Sex", rownames(tab1))) + 2)),]
+
+# rownames(tab1) <- gsub("Race}", "Race$^\\\\sharp$}", rownames(tab1))
+
+tab1 <- tab1[-which(grepl("Deceased|Years of", rownames(tab1))),]
+
+rownames(tab1) <- gsub("\\\\natural", "a", rownames(tab1))
+
+if (table.engine == "pander") {
+	rownames(tab1) <- gsub("\\\\hspace\\{10pt\\}", "&#9;", rownames(tab1))
+	rownames(tab1) <- gsub("\\\\textbf\\{", "**", rownames(tab1))
+	rownames(tab1) <- gsub("}", "**", rownames(tab1))
+	
+	colnames(tab1) <- colnames(tab1) <- c(
+		"Full cohort", "", "",
+		"Subset with complete work records $^b$", "")
+}
+
+if (table.engine == "xtable") {
+	colnames(tab1) <- c("\\multicolumn{2}{l}{Full cohort} && %", "\\hphantom{2}", "\\hphantom{3}",
+											"\n\\multicolumn{2}{L{0.25\\linewidth}}{Subset with complete work records $^b$} \\\\ %")
+}
+
+rownames(tab1) <- gsub(", mean \\(SD\\)", "", rownames(tab1))
+
+tab1 <- as.data.table(cbind(
+	rownames(tab1),
+	tab1))
+
+names(tab1)[1] <- " "
+names(tab1)[6] <- "  "
+
+# Not math mode
+og.names <- names(tab1)
+names(tab1) <- paste0("V", 1:ncol(tab1))
+tab1[,
+		 (names(tab1)[-1]) := lapply(tab1[,-1], function(x) {gsub( "\\$", "", x)})]
+tab1[,
+		 (names(tab1)[-1]) := lapply(tab1[,-1], function(x) {gsub( "\\\\,", " ", x)})]
+names(tab1) <- og.names
+if (table.engine != "xtable") {
+tab1[,
+		 (names(tab1)[-1]) := lapply(tab1[,-1], function(x) {gsub( " \\\\%", "%", x)})]
+	}
+
+if (table.engine == "xtable") {
+	xtable(tab1,
+				 align = "cp{0.35\\textwidth}rllrl") %>% print.xtable(
+				 	include.rownames = F,
+				 	add.to.row = list(
+				 		pos = list(nrow(.)),
+				 		command = paste0(
+				 			"\\hline",
+				 			"\n\\multicolumn{", ncol(.), "}{p{0.7\\textwidth}}{\\footnotesize{",
+				 			"Notes: Statistics shown are median (first quartile, third quartile), unless otherwise indicated.",
+				 			"}} \\\\",
+				 			# "\n\\multicolumn{", ncol(.) + 1, "}{p{0.7\\textwidth}}{\\footnotesize{",
+				 			# "$^\\sharp$ Those of unknown race were assumed to be white, based on recorded data.",
+				 			# "}} \\\\",
+				 			"\n\\multicolumn{", ncol(.), "}{p{0.7\\textwidth}}{\\footnotesize{",
+				 			"$^a$ Some subjects worked at several sites; plant indicates the site of longest work record time.",
+				 			"}} \\\\",
+				 			"\n\\multicolumn{", ncol(.), "}{p{0.7\\textwidth}}{\\footnotesize{",
+				 			"$^b$ Left work by December 31, 1994 when employment records were truncated.",
+				 			"}} \\\\")
+				 	)
+				 )} else {
+				 	pander(tab1,
+				 				align = rep('l', ncol(tab1)),
+				 				caption = "Table 1. Summary of the UAW-GM Cohort restricted to men employed in or after 1970.")
+				 }
+```
+\end{table}
+
+\begin{table}[H]
+\caption{Adjusted hazard ratio estimates for suicide by employment status in the full UAW-GM Cohort, using the recorded worker exit date and the reclassified worker exit date.}
+\label{tab:tab2}
+\centering
+```{r tab2}
+coxph.tab <- lapply(c(NA,
+											# 10,
+											7
+), function(x) {
+	coxph.tab <- readRDS(here::here(
+		"reports/resources/estimates",
+		paste0("sincehire_suicide_recent",
+					 ifelse(is.na(x), "", paste0("_baseline", x)), ".tab.rds")))
+	names(coxph.tab)[1] <- " "
+	names(coxph.tab)[5] <- "(95\\% CI)"
+	coxph.tab <- coxph.tab[,-c("SE")]
+	if (is.finite(x)) {
+		coxph.tab <- coxph.tab[,-(1:2)]
+	} else {
+		coxph.tab <- as.data.table(cbind(
+			coxph.tab[,1:2],
+			data.frame("\\phantom{}" = "", check.names = F),
+			coxph.tab[,-(1:2)]
+		))
+	}
+	coxph.tab
+})
+
+coxph.tab <- cbind(coxph.tab[[1]],
+									 data.frame("\\phantom{}" = "", check.names = F),
+									 coxph.tab[[2]]
+									 # data.frame("\\phantom{}" = "", check.names = F),
+									 # coxph.tab[[3]]
+)
+
+coxph.tab[,1] <- gsub(
+	"Job status", "Job exit status", unlist(coxph.tab[,1]))
+
+j_hr <- c(4, 8
+) + 1
+coxph.tab[is.na(HR) & !grepl('spl', `  `), j_hr] <- "$1.0$"
+coxph.tab[grepl('spl', `  `), `:=`(
+	`  ` = paste0(substr(`  `, 1, unlist(gregexpr("=", `  `)) - 1),
+								"= ",
+								round(as.numeric(substr(`  `, regexpr("[0-9]", `  `), nchar(`  `) - 2)), 2),
+								substring(`  `, nchar(`  `) - 1)
+	))]
+coxph.tab[grep("Job exit|Calendar", unlist(coxph.tab[,1])), j_hr + 1] <- "\\multicolumn{1}{c}{--}"
+
+# Remove other rows
+coxph.tab <- coxph.tab[1:2,-1]
+coxph.tab[,1] <- c("At work", "Not at work")
+colnames(coxph.tab)[1] <- "Job exit status"
+j_hr <- j_hr - 1
+
+# Not math mode
+og.names <- names(coxph.tab)
+names(coxph.tab) <- paste0("V", 1:ncol(coxph.tab))
+coxph.tab[,
+		 (names(coxph.tab)) := lapply(coxph.tab, function(x) {gsub( "\\$|\\(|\\)", "", x)})]
+coxph.tab[,
+		 (names(coxph.tab)) := lapply(coxph.tab, function(x) {gsub( "\\\\,", " ", x)})]
+names(coxph.tab) <- gsub("\\(|\\)", "", og.names)
+
+if (table.engine == 'xtable') {
+	
+	# names(coxph.tab)[1] <- paste("\\vphantom{\\Large Foo}", names(coxph.tab)[1])
+	
+	xtable(coxph.tab,
+				 align = "clrcllrcll"#rcll"
+	) %>% print.xtable(
+		hline.after = c(nrow(.)),
+		add.to.row = list(
+			pos = list(-1, 0, nrow(.)),
+			command = c(paste("\\toprule\n",
+												"&&\\multicolumn{3}{p{2.55cm}}{Recorded worker exit date}",
+												# "&&\\multicolumn{3}{p{2.55cm}}{10-year follow-up}",
+												"&&\\multicolumn{3}{p{2.55cm}}{Reclassified worker exit date$^\\sharp$}",
+												"\\\\",
+												"\n",
+												paste0("\\cline{",
+															 j_hr - 1,
+															 "-",
+															 j_hr + 1,
+															 "}", collapse = "")
+			),
+			"\\midrule\n",
+			paste0(
+				"\\hline",
+				"\\multicolumn{", ncol(.), "}{p{0.55\\textwidth}}{\\footnotesize{",
+				"Abbreviations: CI, confidence interval; HR, hazard ratio",
+				"}} \\\\",
+				"\\multicolumn{", ncol(.), "}{p{0.55\\textwidth}}{\\footnotesize{",
+				"Notes: Estimates were adjusted for race, plant, year of hire, and time-varying calendar year. Risk sets were indexed by age.",
+				"}} \\\\",
+				"\\multicolumn{", ncol(.), "}{p{0.55\\textwidth}}{\\footnotesize{",
+				"$^\\sharp$ Cases that occurred within a week after the recorded worker exit date were assumed to have occurred while still employed.",
+				"}} \\\\"
+			))
+		)
+	)} else {colnames(coxph.tab) <- gsub("\\\\phantom\\{\\}", "", colnames(coxph.tab))
+	og.names <- names(coxph.tab)
+	names(coxph.tab) <- paste0('V', 1:ncol(coxph.tab))
+	for (j in names(coxph.tab)) {
+		set(coxph.tab, i = NULL, j = j, value = gsub("\\\\multicolumn\\{.*\\}", "--", coxph.tab[[j]]))
+		set(coxph.tab, i = NULL, j = j, value = gsub("\\\\hspace\\{.*\\}", "", coxph.tab[[j]]))
+	}
+	names(coxph.tab) <- og.names
+	pander(coxph.tab,
+				align = unlist(strsplit("lrcllrcll", "")),
+				caption = "Table 2. Adjusted hazard ratio estimates for suicide by employment status in the subset of the UAW-GM Cohort with complete work records using the recorded worker exit date and the reclassified worker exit date.")
+	}
+
+```
+\end{table}
+
+\begin{table}[H]
+\caption{Adjusted hazard ratio estimates for suicide and the combined outcome of suicide and fatal overdose by age at worker exit in the subset of the UAW-GM Cohort with complete work records.}
+\label{tab:tab3}
+\centering
+```{r tab3}
+coxph.tab <- lapply(c(
+	"suicide", "despair"), function(x) {
+		coxph.tab <- readRDS(here::here(
+			"reports/resources/estimates",
+			paste0(x, "_recent.tab.rds")))
+		names(coxph.tab)[2] <- "Age at worker exit"
+		names(coxph.tab)[5] <- "(95\\% CI)"
+		coxph.tab <- coxph.tab[as.vector(zoo::na.locf(coxph.tab[,1]) == "Age at job loss"),]
+		coxph.tab <- coxph.tab[,-c("Covariate", "SE")]
+		if (x == "despair") {
+			coxph.tab <- coxph.tab[,-1]
+		} else {
+			coxph.tab <- as.data.table(cbind(
+				coxph.tab[,1],
+				data.frame("\\phantom{}" = "", check.names = F),
+				coxph.tab[,-1]))
+			coxph.tab$`Age at worker exit` <- paste0(
+				"\\hspace{10pt}",
+				coxph.tab$`Age at worker exit`
+			)
+		}
+		coxph.tab
+	})
+
+coxph.tab <- cbind(coxph.tab[[1]],
+									 data.frame("\\phantom{}" = "", check.names = F),
+									 coxph.tab[[2]]
+)
+j_hr <- c(4, 8)
+coxph.tab[is.na(HR), j_hr] <- "$1.0$"
+coxph.tab[grep("55", unlist(coxph.tab[,1])), j_hr + 1] <- "\\multicolumn{1}{c}{--}"
+
+# Not math mode
+og.names <- names(coxph.tab)
+names(coxph.tab) <- paste0("V", 1:ncol(coxph.tab))
+coxph.tab[,
+		 (names(coxph.tab)) := lapply(coxph.tab, function(x) {gsub( "\\$|\\(|\\)", "", x)})]
+coxph.tab[,
+		 (names(coxph.tab)) := lapply(coxph.tab, function(x) {gsub( "\\\\,", " ", x)})]
+names(coxph.tab) <- gsub("\\(|\\)", "", og.names)
+
+if (table.engine == 'xtable') {
+	names(coxph.tab)[1] <- paste("\\vphantom{\\Large Foo}", names(coxph.tab)[1])
+	xtable(coxph.tab,
+				 align = "clrcllrcll"
+	) %>% print.xtable(
+		hline.after = c(nrow(.)),
+		add.to.row = list(
+			pos = list(-1, 0, nrow(.)),
+			command = c(paste("\\toprule\n",
+												"&&\\multicolumn{3}{p{2.55cm}}{Suicide}",
+												"&&\\multicolumn{3}{p{2.55cm}}{Suicide and fatal overdose}",
+												"\\\\",
+												"\n",
+												paste0("\\cline{",
+															 j_hr - 1,
+															 "-",
+															 j_hr + 1,
+															 "}", collapse = "")
+			),
+			"\\midrule\n",
+			paste0(
+				"\\hline",
+				"\\multicolumn{", ncol(.), "}{p{0.55\\textwidth}}{\\footnotesize{",
+				"Abbreviations: CI, confidence interval; HR, hazard ratio",
+				"}} \\\\",
+				"\\multicolumn{", ncol(.), "}{p{0.55\\textwidth}}{\\footnotesize{",
+				"Notes: Estimates were adjusted for race, plant, and calendar year of worker exit. Risk sets were indexed by time since worker exit.",
+				"}} \\\\"
+				# "\\multicolumn{", ncol(.), "}{p{0.65\\textwidth}}{\\footnotesize{",
+				# "$^\\sharp$ Restricted to men employed in or after 1970.",
+				# "}} \\\\"
+			))
+		)
+	)
+} else {
+	colnames(coxph.tab) <- gsub("\\\\phantom\\{\\}", "", colnames(coxph.tab))
+	og.names <- names(coxph.tab)
+	names(coxph.tab) <- paste0('V', 1:ncol(coxph.tab))
+	for (j in names(coxph.tab)) {
+		set(coxph.tab, i = NULL, j = j, value = gsub("\\\\multicolumn\\{.*\\}", "--", coxph.tab[[j]]))
+		set(coxph.tab, i = NULL, j = j, value = gsub("\\\\hspace\\{.*\\}", "", coxph.tab[[j]]))
+	}
+	names(coxph.tab) <- og.names
+	pander(coxph.tab,
+				justify = unlist(strsplit("lrcllrcll", "")),
+				caption = "Table 3. Adjusted hazard ratio estimates for suicide and the combined outcome of suicide and fatal overdose by age at worker exit in the subset of the UAW-GM Cohort with complete work records.")
+}
+```
+\end{table}
+
+\begin{figure}[H]
+\caption{Directed acyclic graph representing the working causal assumptions.}
+\label{fig:fig1}
+\centering
+\includegraphics{"`r here::here("reports/resources", "dag")`"}
+\end{figure}
+
+```{r fig1, fig.cap="Figure 1. Directed acyclic graph representing our working causal assumptions."}
+if (table.engine != 'xtable') {
+	include_graphics(here::here("reports/resources/images", "dag.png"))
+}
+```
+
+\begin{figure}[H]
+\caption{Crude rate (per 100,000 person-years) of suicide and the combined outcome of suicide and fatal overdose by calendar year in the full UAW-GM Cohort.}
+\label{fig:fig2}
+\centering
+\includegraphics{"`r here::here("reports/resources", "crude_rate_suicide_despair_by_calyear_landscape_recent_all-records")`"}
+\end{figure}
+
+```{r fig2, fig.cap="Figure 2. Crude rate (per 100,000 person-years) of suicide and the combined outcome of suicide and fatal overdose by calendar year in the full UAW-GM Cohort."}
+if (table.engine != 'xtable') {
+	include_graphics(here::here("reports/resources/images", "crude_rate_suicide_despair_by_calyear_landscape_recent_all-records.png"))
+}
+```
+
+
