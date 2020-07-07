@@ -19,7 +19,7 @@ ref.age <- 55
 if (ifelse(
 	!('cohort_recent' %in% ls()), T,
 	is.null(cohort_recent$jobloss.age))) {
-	source(here::here('despair', 'get-ips-cohort.R'))
+	source(here::here('despair', 'get-1970-cohort.R'))
 
 	cohort_analytic[is.na(employment_end.date) & !is.na(yout),
 									employment_end.date := yout]

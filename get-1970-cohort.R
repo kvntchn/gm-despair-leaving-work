@@ -316,4 +316,4 @@ studyno.sample <- sample(unique(cohort_ips$studyno),
 												 5000,
 												 replace = F)
 
-source(here::here('get-ips-cohort-recent.R'))
+source(here::here('get-ips-1970-recent.R'))
